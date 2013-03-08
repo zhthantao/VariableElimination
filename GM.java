@@ -191,14 +191,8 @@ public class GM {
 		
 		//add fill edge
 		addFillEdges(vout);
-		
-		//remove edges from this variable
-		for(Variable v : vout.neighbours) {
-			v.neighbours.remove(vout);
-		}
-		
+
 		for(Variable v : f.variables) {
-			
 			System.out.print(v.id + " ");
 		}
 		System.out.println();
@@ -244,11 +238,13 @@ public class GM {
 			for(int j = i + 1; j < size; j++) {
 				runner = v.neighbours.get(j);
 				if(!current.neighbours.contains(runner) && !runner.neighbours.contains(current)) {
+					System.out.println("fill edge added:" + current.id + " " + runner.id);
 					current.neighbours.add(runner);
 					runner.neighbours.add(current);
 				}
 			}
 			order.add(current);
 		}
+		System.out.println("end of filledge");
 	}
 }

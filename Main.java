@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class Main {
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) {;
 		
 		GM gm = new GM();
 		String inputFile = args[0];
@@ -18,11 +18,13 @@ public class Main {
 		/* Elimination */
 		ArrayList<Factor> factors;
 		
+		for(Variable v : gm.variables) {
+			System.out.println("order: " + v.id + " size:" + v.neighbours.size());
+		}
+		
 		Variable v;
 		while(!gm.order.isEmpty()) {
 			v = gm.order.poll();
-//		for(Variable v : gm.variables) {
-			System.out.println("order: " + v.id + " size:" + v.neighbours.size());
 			factors = new ArrayList<Factor>();
 			for(Factor f : gm.factors) {
 				if(f.variables.contains(v)) {
