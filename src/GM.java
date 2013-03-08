@@ -1,3 +1,8 @@
+/**@author: Ranjit Kumar Parvathaneni
+ * @created: 25th February 2013
+ * @name: GM
+ */
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Collections;
@@ -59,10 +64,17 @@ public class GM {
 
 			//table in factors
 			int tableSize = 0;
+			double value;
+			LogNumber log;
 			for(int i = 0; i < this.factors.size(); i++) {
 				tableSize = s.nextInt();
 				for(int j = 0; j < tableSize; j++) {
-					this.factors.get(i).table.add(s.nextDouble());
+					value = s.nextDouble();
+					if(value == 0)
+						log = new LogNumber(value, true);
+					else
+						log = new LogNumber(Math.log(value), false);
+					this.factors.get(i).table.add(log);
 				}
 			}
 			
@@ -143,49 +155,55 @@ public class GM {
 		});
 
 		HashMap<Integer, Integer> values = new HashMap<Integer, Integer>();
-		double value1, value2, product;
+		LogNumber value1, value2, product;
 		for(int i = 0; i < newFactor.table.size(); i++) {
 			values = newFactor.getValuesFromIndex(i);
-
-
 			value1 = f1.table.get(f1.getIndexFromValues(values));
 			value2 = f2.table.get(f2.getIndexFromValues(values));
-			product = value1 * value2;
+			if(value1.isZero || value2.isZero){
+				product = new LogNumber(0.0, true);
+			}
+			else
+				product = new LogNumber(value1.value + value2.value, false);	//because log values
 			newFactor.table.set(i, product);
 		}
-		System.out.println();
 		return newFactor;
 	}
 	
 	
 	public void sumout(Factor f, Variable vout) {
-		System.out.println("eliminating v:" + vout.id);
-		for(Variable v : f.variables) {
-			System.out.print(v.id + " ");
-		}
-		System.out.println();
-		
-//		System.out.println("ITable:" + this.table.size());
-//		for(Double d : this.table) {
-//			System.out.println(d);
-//		}
-		
-		ArrayList<Double> table = new ArrayList<Double>();
 		int size = f.table.size();
-		int product = size;
-		double sum;
-		for(Variable v : f.variables) {
-			product = product / v.d;
-			if(v.equals(vout)) {
-				for(int i = 0; i < size / v.d; i++) {
-					sum = 0;
-					for(int j = 0; j < v.d; j++) {
-						sum += f.table.get(i + j * product);
-					}
-					table.add(sum);
-				}
+		int blockSize = size;
+		for(Variable v: f.variables) {
+			blockSize = blockSize / v.d;
+			if(vout == v)
 				break;
+		}
+		
+		int newSize = size/vout.d;
+		
+		ArrayList<LogNumber> table = new ArrayList<LogNumber>(newSize);
+		LogNumber sum, value;
+		for(int i = 0; i < size; i++) {
+			sum = new LogNumber(0.0, true);
+			if(i - blockSize >= 0) {
+				if((i - blockSize)%(blockSize*vout.d) == 0) {
+					i += (vout.d - 1)*blockSize;
+				}
+				if(i >= size)
+					break;
 			}
+			for(int j = 0; j < vout.d; j++) {
+				value = f.table.get(i + j * blockSize);
+				if(sum.isZero && !value.isZero)
+					sum = value;
+				else if(!sum.isZero && !value.isZero)
+					if(sum.value > value.value)
+						sum.value = sum.value + Math.log(1 + Math.exp(value.value - sum.value));
+					else
+						sum.value = value.value + Math.log(1 + Math.exp(sum.value - value.value));
+			}
+			table.add(sum);
 		}
 		f.variables.remove(vout);
 		
@@ -197,18 +215,6 @@ public class GM {
 			v.neighbours.remove(vout);
 		}
 		
-		for(Variable v : f.variables) {
-			
-			System.out.print(v.id + " ");
-		}
-		System.out.println();
-
-//		System.out.println();
-//		System.out.println("Table:" + table.size());
-//		for(Double d : table) {
-//			System.out.println(d);
-//		}
-		System.out.println();
 		f.table = table;
 	}
 	

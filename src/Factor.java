@@ -1,3 +1,7 @@
+/**@author: Ranjit Kumar Parvathaneni
+ * @created: 25th February 2013
+ * @name: Factor
+ */
 import java.util.HashMap;
 import java.util.ArrayList;
 
@@ -5,11 +9,11 @@ import java.util.ArrayList;
 public class Factor {
 
 	ArrayList<Variable> variables;
-	ArrayList<Double> table;
+	ArrayList<LogNumber> table;
 	
 	public Factor() {
 		this.variables = new ArrayList<Variable>();
-		this.table = new ArrayList<Double>();
+		this.table = new ArrayList<LogNumber>();
 	}
 	
 	public Factor(Factor f) {
@@ -19,13 +23,13 @@ public class Factor {
 	
 	public void addVariable(Variable v) {
 		if(!this.variables.contains(v)) {
-			ArrayList<Double> table = new ArrayList<Double>();
+			ArrayList<LogNumber> table = new ArrayList<LogNumber>();
 			this.variables.add(v);
 			int size = this.table.size();
 			if(size == 0)
 				size = 1;
 			for(int i = 0; i <  v.d * size; i++)
-				table.add(1d);
+				table.add(new LogNumber(1d, false));
 			this.table = table;
 		}
 	}

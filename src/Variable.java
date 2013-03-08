@@ -1,3 +1,8 @@
+/**@author: Ranjit Kumar Parvathaneni
+ * @created: 25th February 2013
+ * @name: Variable
+ */
+
 import java.util.ArrayList;
 
 

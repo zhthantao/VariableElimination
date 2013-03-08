@@ -1,3 +1,10 @@
+/** @author: Ranjit Kumar Parvathaneni
+ * @created: 25th February 2013
+ * @purpose: Created as a part of Homework #2 - Variable Elimination. 
+ * 			Course : Statistical methods in AI/ML
+ * @class: Main.java
+ */
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.ArrayList;
@@ -13,7 +20,7 @@ public class Main {
 		
 		gm.read(inputFile, evidFile);	//read the data
 		gm.instantiate();	//instantiate the evidence
-		
+
 		int maxClusterSize = 2;
 		/* Elimination */
 		ArrayList<Factor> factors;
@@ -21,15 +28,10 @@ public class Main {
 		Variable v;
 		while(!gm.order.isEmpty()) {
 			v = gm.order.poll();
-//		for(Variable v : gm.variables) {
-			System.out.println("order: " + v.id + " size:" + v.neighbours.size());
 			factors = new ArrayList<Factor>();
 			for(Factor f : gm.factors) {
 				if(f.variables.contains(v)) {
 					factors.add(f);
-					for(Variable v1 : f.variables)
-						System.out.print(v1.id + " ");
-					System.out.println();
 				}
 			}
 			
@@ -59,7 +61,12 @@ public class Main {
 				gm.factors.add(newFactor);
 			}
 		}
-		System.out.println(gm.factors.get(0).table.get(0));
-		System.out.println(maxClusterSize);
+		double probability = 0.0;
+		for(Factor f : gm.factors) {
+			probability += f.table.get(0).value;
+		}
+		System.out.println("Probability in log: " + probability);
+		System.out.println("Probability of evidence: " + Math.exp(probability));
+		System.out.println("Maximum width: " + maxClusterSize);
 	}
 }
